@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeoStudio — истории и карточки бизнеса</title>
+  <meta name="description" content="Создавайте истории и улучшайте карточки бизнеса в Яндекс Бизнес и 2ГИС.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#stories"><span class="brand-mark">G</span>Geo<span>Studio</span></a>
+    <div class="workspace-label">ВАША РАБОЧАЯ СТУДИЯ</div>
+    <nav aria-label="Разделы приложения">
+      <button class="nav-item active" data-view="stories" aria-current="page"><span class="nav-icon">▧</span>Истории<span class="nav-arrow">›</span></button>
+      <button class="nav-item" data-view="analysis"><span class="nav-icon">◎</span>Анализ карточки</button>
+      <button class="nav-item" data-view="tasks"><span class="nav-icon">✳</span>Мои задания</button>
+      <button class="nav-item" data-view="business"><span class="nav-icon">⌂</span>Мой бизнес</button>
+    </nav>
+    <div class="sidebar-note"><div class="orbit">›</div><strong>Ближе к вашим клиентам</strong><p>Истории, которые рассказывают о бизнесе. Карточки, в которых всё на своём месте.</p><div class="platform-dots"><span class="ya-dot">Я</span><span class="gis-dot">2</span><small>Яндекс Бизнес · 2ГИС</small></div></div>
+    <div class="sidebar-footer"><span class="status-dot"></span>Личная студия <span>v1.0</span></div>
+  </aside>
+  <main>
+    <header class="topbar"><div><span class="breadcrumb">Рабочее пространство</span><span class="breadcrumb-divider">/</span><span id="breadcrumb-view">Истории</span></div><button class="profile-button" data-view="business"><span class="avatar">М</span><span id="project-label">Мой бизнес</span><span>⌄</span></button></header>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    <section id="view-stories" class="view">
+      <div class="page-heading"><div><div class="eyebrow">КОНТЕНТ ДЛЯ ГЕОСЕРВИСОВ</div><h1>У вашего бизнеса<br>есть что рассказать<span>.</span></h1><p>Превратите ваши услуги и предложения в истории для клиентов.</p></div><div class="heading-badge"><span>✦</span>От идеи<br>до готовой истории</div></div>
+      <div class="studio-grid">
+        <form id="story-form" class="panel story-settings">
+          <div class="panel-heading"><span class="step-number">01</span><div><h2>Соберите историю</h2><p>Несколько деталей — и можно начинать</p></div></div>
+          <label for="story-platform">Где рассказываем</label><select id="story-platform"><option value="both">Яндекс Бизнес и 2ГИС</option><option value="yandex">Яндекс Бизнес</option><option value="2gis">2ГИС</option></select>
+          <label for="story-goal">О чём история</label><select id="story-goal"><option value="intro">Знакомство с бизнесом</option><option value="service">Услуга или товар</option><option value="offer">Акция или предложение</option></select>
+          <label for="quick-name">Название бизнеса <span class="required">*</span></label><input id="quick-name" maxlength="80" placeholder="Например, Цветочная мастерская" required>
+          <label for="story-facts">Что важно рассказать</label><textarea id="story-facts" rows="4" maxlength="3000" placeholder="Какие услуги вы оказываете? Что должен знать клиент?"></textarea>
+          <div id="offer-field" hidden><label for="story-offer">Условия предложения <span class="required">*</span></label><textarea id="story-offer" rows="3" maxlength="500" placeholder="Реальная цена, скидка и срок действия"></textarea></div>
+          <label for="story-cta">Призыв к действию</label><input id="story-cta" maxlength="100" value="Посмотрите нашу карточку">
+          <div class="two-fields"><div><label for="story-theme">Оформление</label><select id="story-theme"><option value="warm">Тёплый песок</option><option value="forest">Зелёный сад</option><option value="night">Ночной город</option></select></div><div><label for="story-format">Формат</label><select id="story-format"><option value="portrait">1080 × 1920</option><option value="square">1080 × 1080</option></select></div></div>
+          <label class="upload" for="story-photo"><span>＋</span><strong>Добавить своё фото</strong><small id="photo-label">JPG, PNG, WebP · до 8 МБ</small><input id="story-photo" type="file" accept="image/jpeg,image/png,image/webp"></label><button type="button" id="remove-photo" class="text-button" hidden>Убрать фото</button>
+          <button class="primary wide" type="submit" id="generate-button">Создать 3 истории <span>›</span></button>
+          <p class="form-note">Шаблоны по вашим данным. Публикация в геосервисах — вручную.</p><p id="story-error" class="error" role="alert" hidden></p>
+        </form>
+        <div class="preview-panel">
+          <div class="preview-heading"><div><span class="step-number">02</span><h2>Ваша история</h2></div><span class="pill">PNG + текст</span></div>
+          <div class="preview-stage"><canvas id="story-canvas" width="1080" height="1920" aria-label="Предпросмотр истории"></canvas><div class="canvas-caption">ПРЕДПРОСМОТР</div></div>
+          <div id="slide-tabs" class="slide-tabs" role="group" aria-label="Выбор истории"></div>
+          <div id="slide-editor" class="panel slide-editor" hidden><div class="editor-label">ОТРЕДАКТИРУЙТЕ ПЕРЕД ПУБЛИКАЦИЕЙ</div><label for="slide-title">Заголовок</label><input id="slide-title" maxlength="120"><label for="slide-body">Текст</label><textarea id="slide-body" rows="3" maxlength="3000"></textarea><label for="slide-cta">Кнопка / призыв</label><input id="slide-cta" maxlength="100"><div class="download-actions"><button type="button" id="download-png" class="primary">Скачать PNG ↓</button><button type="button" id="copy-story" class="secondary">Копировать текст</button></div><p id="canvas-warning" class="form-note" hidden>Часть текста не помещается на изображении. Сократите его; полный текст можно скопировать отдельно.</p></div>
+          <p class="preview-note">Размер — ваш выбор. Перед загрузкой проверьте актуальные требования площадки.</p>
+        </div>
+      </div>
+      <div class="tips-row"><div><span>01</span><strong>Расскажите о себе</strong><p>Используйте реальные факты, услуги и условия.</p></div><div><span>02</span><strong>Добавьте свой стиль</strong><p>Выберите оформление, фото и отредактируйте текст.</p></div><div><span>03</span><strong>Поделитесь историей</strong><p>Скачайте изображения и загрузите в свой кабинет.</p></div></div>
+    </section>
+    <section id="view-analysis" class="view" hidden>
+      <div class="page-heading"><div><div class="eyebrow">ПОРЯДОК В КАРТОЧКЕ</div><h1>Посмотрите на бизнес<br>глазами клиента<span>.</span></h1><p>Заполните данные карточки и получите список улучшений.</p></div></div>
+      <div class="analysis-grid"><form id="analysis-form" class="panel"><h2>Данные карточки</h2><p class="muted">Перенесите информацию из вашей карточки. Ссылку приложение автоматически не читает.</p><label for="analysis-platform">Геосервис</label><select id="analysis-platform"><option value="yandex">Яндекс Бизнес</option><option value="2gis">2ГИС</option></select><label for="analysis-url">Ссылка на карточку <span class="optional">необязательно</span></label><input id="analysis-url" type="url" placeholder="https://yandex.ru/maps/…"><div class="two-fields"><div><label for="analysis-name">Название</label><input id="analysis-name" maxlength="80"></div><div><label for="analysis-category">Категория</label><input id="analysis-category" maxlength="100"></div></div><label for="analysis-address">Адрес</label><input id="analysis-address" maxlength="300"><div class="two-fields"><div><label for="analysis-phone">Телефон / контакт</label><input id="analysis-phone" maxlength="200"></div><div><label for="analysis-hours">Часы работы</label><input id="analysis-hours" maxlength="200" placeholder="Пн–Пт, 09:00–18:00"></div></div><label for="analysis-description">Описание</label><textarea id="analysis-description" rows="3" maxlength="3000"></textarea><label for="analysis-services">Услуги и товары</label><textarea id="analysis-services" rows="2" maxlength="3000"></textarea><div class="two-fields"><div><label for="analysis-photos">Количество фото</label><input id="analysis-photos" type="number" min="0" max="100000" step="1" placeholder="Неизвестно"></div><div><label for="analysis-rating">Рейтинг (0–5)</label><input id="analysis-rating" type="number" min="0" max="5" step="0.1" placeholder="Неизвестно"></div><div><label for="analysis-reviews">Всего отзывов</label><input id="analysis-reviews" type="number" min="0" max="10000000" step="1" placeholder="Неизвестно"></div><div><label for="analysis-unanswered">Отзывы без ответа</label><input id="analysis-unanswered" type="number" min="0" max="10000000" step="1" placeholder="Неизвестно"></div></div><button class="primary wide" type="submit">Проанализировать карточку ›</button><p id="analysis-error" class="error" role="alert" hidden></p></form><div><div id="analysis-empty" class="empty-panel"><div class="empty-symbol">◎</div><h2>Хорошая карточка<br>начинается с деталей</h2><p>Контакты, фотографии, услуги, ответы на отзывы — проверим, всё ли на месте.</p><span class="pill">Анализ по вашим данным</span></div><div id="analysis-result" hidden></div></div></div>
+    </section>
+    <section id="view-tasks" class="view" hidden>
+      <div class="page-heading"><div><div class="eyebrow">ВАШИ ИДЕИ, ВАШИ ПРАВИЛА</div><h1>Что сделаем<br>для вашего бизнеса<span>?</span></h1><p>Поручите помощнику подготовить тексты и разобрать ваши идеи.</p></div></div>
+      <div class="task-grid"><form id="task-form" class="panel"><div class="panel-heading"><span class="step-number">✳</span><h2>Новое задание</h2></div><div id="ai-status" class="connection-status">Проверяем подключение ИИ…</div><div class="task-examples"><button type="button" data-task="Составь контент-план из 7 историй на неделю. Используй только данные моего бизнеса.">Контент-план</button><button type="button" data-task="Напиши три варианта описания моего бизнеса для карточки. Не добавляй факты, которых нет в данных.">Описание бизнеса</button><button type="button" data-task="Помоги ответить на отзыв клиента. Сначала попроси текст отзыва и нужные подробности.">Ответ на отзыв</button></div><label for="task-input">Опишите задание</label><textarea id="task-input" rows="9" maxlength="6000" required placeholder="Например: придумай серию историй о наших услугах. Тон — дружелюбный, без громких обещаний."></textarea><p class="form-note">Помощник получает данные из раздела «Мой бизнес». Он готовит текст; публикация и изменения в карточках выполняются вами.</p><div class="download-actions"><button class="primary" id="task-submit" type="submit">Выполнить задание ›</button><button class="secondary" id="save-task" type="button">Сохранить черновик</button></div><p id="task-error" class="error" role="alert" hidden></p><p class="muted small">Когда ИИ подключён, текст задания и данные бизнеса отправляются в OpenAI. Ключ хранится на сервере.</p></form><div class="panel task-output"><div class="output-heading"><h2>Результат</h2><button id="copy-task" class="text-button" type="button" hidden>Копировать</button></div><div id="task-result" class="result-text">Здесь появится ответ на ваше задание.</div></div></div>
+    </section>
+    <section id="view-business" class="view" hidden>
+      <div class="page-heading"><div><div class="eyebrow">ОСНОВА ВАШЕГО КОНТЕНТА</div><h1>Давайте познакомимся<br>с вашим бизнесом<span>.</span></h1><p>Эти данные помогут создавать материалы именно для вас.</p></div></div>
+      <form id="business-form" class="panel business-panel"><h2>Профиль бизнеса</h2><label for="business-name">Название <span class="required">*</span></label><input id="business-name" maxlength="80" required placeholder="Название вашей компании"><div class="two-fields"><div><label for="business-category">Сфера деятельности</label><input id="business-category" maxlength="100" placeholder="Кафе, салон красоты, автосервис…"></div><div><label for="business-city">Город</label><input id="business-city" maxlength="100"></div></div><label for="business-audience">Для кого вы работаете</label><input id="business-audience" maxlength="200" placeholder="Кто ваши клиенты?"><label for="business-facts">Услуги и важные факты</label><textarea id="business-facts" rows="5" maxlength="3000" placeholder="Укажите только достоверные сведения. Не добавляйте персональные данные клиентов."></textarea><label for="business-contact">Как связаться</label><input id="business-contact" maxlength="200" placeholder="Телефон, адрес или способ записи"><button class="primary" type="submit">Сохранить профиль ✓</button><p class="form-note">Профиль, тексты историй, данные анализа и черновик задания сохраняются в этом браузере. Загруженное фото не сохраняется. Учитывайте это на общем компьютере.</p><button id="clear-project" type="button" class="text-button danger">Удалить сохранённые данные</button></form>
+    </section>
+    <footer class="main-footer"><span>GeoStudio · пространство для вашего бизнеса</span><span>Сделано для локальных идей ›</span></footer>
+  </main>
+</body>
+</html>
